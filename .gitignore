@@ -7,7 +7,7 @@
 gradle-app.setting
 
 # IDE configuration files
-/.idea/
+.idea/
 /*.iml
 *.iws
 
