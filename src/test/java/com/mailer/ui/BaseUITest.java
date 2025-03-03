@@ -9,8 +9,9 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.springframework.stereotype.Component;
 
-
+@Component
 public class BaseUITest {
     private static Playwright playwright;
     private static Browser browser;

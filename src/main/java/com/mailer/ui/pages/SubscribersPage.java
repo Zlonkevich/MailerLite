@@ -1,6 +1,6 @@
 package com.mailer.ui.pages;
 
-import com.mailer.common.utils.ConfigReader;
+import com.mailer.common.AppUrlConfig;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import io.qameta.allure.Step;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 public class SubscribersPage extends BaseSMNPage {
     private final Locator addSubscriberButton;
     @Getter
-    private final String URL = ConfigReader.getProperty("frontendBaseUrl") + "/subscribers";
+    private final String URL = AppUrlConfig.Subscribers.SUBSCRIBERS;
 
     private static final String EDIT_BTN = "//td[contains(text(), '%s')]//parent::*//a[@data-test-id='edit-subscriber']";
     private static final String DELETE_BTN = "//td[contains(text(), '%s')]//parent::*//a[@data-test-id='delete-subscriber']";

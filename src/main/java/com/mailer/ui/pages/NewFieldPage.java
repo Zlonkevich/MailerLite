@@ -1,6 +1,6 @@
 package com.mailer.ui.pages;
 
-import com.mailer.common.utils.ConfigReader;
+import com.mailer.common.AppUrlConfig;
 import com.mailer.ui.enums.FieldEnum;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class NewFieldPage extends BaseSMNPage {
     @Getter
-    private final String URL = ConfigReader.getProperty("frontendBaseUrl") + "/fields/new";
+    private final String URL = AppUrlConfig.Fields.NEW;
 
     private final Locator titleInput;
     private final Locator typeSelect;
