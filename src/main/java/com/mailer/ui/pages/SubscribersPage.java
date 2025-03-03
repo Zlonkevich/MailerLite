@@ -1,64 +1,42 @@
 package com.mailer.ui.pages;
 
+import com.mailer.common.utils.ConfigReader;
+import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import io.qameta.allure.Step;
-import lombok.AllArgsConstructor;
+import lombok.Getter;
+import org.springframework.stereotype.Component;
 
-@AllArgsConstructor
-public class SubscribersPage {
-    private final Page page;
+@Component
+public class SubscribersPage extends BaseSMNPage {
+    private final Locator addSubscriberButton;
+    @Getter
+    private final String URL = ConfigReader.getProperty("frontendBaseUrl") + "/subscribers";
 
-    private static final String HOME_TAB = "(//*[@data-test-id='home-tab'])[1]";
-    private static final String SUBSCRIBERS_TAB = "(//a[@data-test-id='subscribers-tab'])[1]";
-    private static final String FIELDS_TAB = "(//a[@data-test-id='fields-tab'])[1]";
-    private static final String ADD_SUBSCRIBER_BUTTON = "[data-test-id='add-subscriber-button']";
-    private static final String DELETE_SUBSCRIBER_BUTTON = "[data-test-id='delete-subscriber']";
-    private static final String EDIT_SUBSCRIBER_BUTTON = "[data-test-id='edit-subscriber']";
+    private static final String EDIT_BTN = "//td[contains(text(), '%s')]//parent::*//a[@data-test-id='edit-subscriber']";
+    private static final String DELETE_BTN = "//td[contains(text(), '%s')]//parent::*//a[@data-test-id='delete-subscriber']";
+    private static final String ADD_SUBSCRIBER_BTN = "[data-test-id='add-subscriber-button']";
 
-    private void checkButtonAndClick(String selector) {
-        if (page.isVisible(selector)) {
-            if (page.isEnabled(selector)) {
-                page.click(selector);
-            } else {
-                throw new RuntimeException("Button is disabled: " + selector);
-            }
-        } else {
-            throw new RuntimeException("Button is not visible: " + selector);
-        }
+    public SubscribersPage(Page page) {
+        super(page);
+        this.addSubscriberButton = page.locator(ADD_SUBSCRIBER_BTN);
     }
 
-    @Step("Navigate to the Home Tab")
-    public void goToHomeTab() {
-        checkButtonAndClick(HOME_TAB);
-    }
-
-    @Step("Navigate to the Subscribers Tab")
-    public void goToSubscribersTab() {
-        checkButtonAndClick(SUBSCRIBERS_TAB);
-    }
-
-    @Step(" Navigate to the Fields Tab")
-    public void goToFieldsTab() {
-        checkButtonAndClick(FIELDS_TAB);
-        return;
-    }
-
-    @Step("Click Add Subscriber Button")
+    @Step("Click 'Add subscriber' button")
     public void clickAddSubscriberButton() {
-        checkButtonAndClick(ADD_SUBSCRIBER_BUTTON);
+        addSubscriberButton.click();
     }
 
-    @Step("Click Edit Subscriber Button (example for a row with subscriber ID or any other field value)")
-    public void clickEditSubscriberButton(String subscriberData) {
-        String selector = String.format("//td[contains(text(), '%s')]//parent::*//a[@data-test-id='edit-subscriber']", subscriberData);
-        checkButtonAndClick(selector);
+    @Step("Click 'Edit Subscriber Button' chosen by input value")
+    public void clickEditButtonByValue(String subscriberData) {
+        var editSelector = String.format(EDIT_BTN, subscriberData);
+        page.locator(editSelector).click();
     }
 
-    @Step("Click Delete Subscriber Button (example for a row with subscriber ID or any other field value)")
-    public SubscribersPage clickDeleteSubscriberButton(String subscriberData) {
-        String selector = String.format("//td[contains(text(), '%s')]//parent::*//a[@data-test-id='delete-subscriber']", subscriberData);
-        checkButtonAndClick(selector);
-        return this;
+    @Step("Click 'Delete Subscriber Button' chosen by input value")
+    public void clickDeleteButtonByValue(String subscriberData) {
+        String deleteSelector = String.format(DELETE_BTN, subscriberData);
+        page.locator(deleteSelector).click();
     }
 
     @Step("Check if a specific subscriber row exists")
