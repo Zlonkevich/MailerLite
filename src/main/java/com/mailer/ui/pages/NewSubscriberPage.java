@@ -2,7 +2,6 @@ package com.mailer.ui.pages;
 
 import com.mailer.common.config.AppUrlConfig;
 import com.mailer.common.enums.SubscriberStateEnum;
-import com.mailer.ui.enums.FieldEnum;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import io.qameta.allure.Step;
@@ -37,22 +36,26 @@ public class NewSubscriberPage extends BaseSMNPage {
     }
 
     @Step("Fill 'Name' input field")
-    public void fillName(String name) {
+    public NewSubscriberPage fillName(String name) {
         nameInput.fill(name);
+        return this;
     }
 
     @Step("Fill 'Email' input field")
-    public void fillEmail(String email) {
+    public NewSubscriberPage fillEmail(String email) {
         emailInput.fill(email);
+        return this;
     }
 
     @Step("Select 'State' from drop down list")
-    public void selectState(SubscriberStateEnum stateEnum) {
+    public NewSubscriberPage selectState(SubscriberStateEnum stateEnum) {
         addFieldSelect.selectOption(stateEnum.getState());
+        return this;
     }
 
     @Step("Click 'Create' button")
-    public void submitForm() {
+    public SubscribersPage submitForm() {
         createButton.click();
+        return new SubscribersPage(page);
     }
 }

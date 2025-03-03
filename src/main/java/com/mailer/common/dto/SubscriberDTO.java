@@ -1,15 +1,16 @@
 package com.mailer.common.dto;
 
-import lombok.Builder;
+import com.mailer.common.enums.SubscriberStateEnum;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.util.Map;
 
 @Data
-@Builder
+@Accessors(chain = true)
 public class SubscriberDTO {
     private String name;
     private String email;
-    private String state;
+    private SubscriberStateEnum state;
     private Map<String, String> additionalInfo;
 }

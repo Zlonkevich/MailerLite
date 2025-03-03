@@ -23,8 +23,9 @@ public class SubscribersPage extends BaseSMNPage {
     }
 
     @Step("Click 'Add subscriber' button")
-    public void clickAddSubscriberButton() {
+    public NewSubscriberPage clickAddSubscriberButton() {
         addSubscriberButton.click();
+        return new NewSubscriberPage(page);
     }
 
     @Step("Click 'Edit Subscriber Button' chosen by input value")

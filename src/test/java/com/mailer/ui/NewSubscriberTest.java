@@ -1,5 +1,7 @@
 package com.mailer.ui;
 
+import com.mailer.common.dto.SubscriberDTO;
+import com.mailer.common.enums.SubscriberStateEnum;
 import com.mailer.ui.pages.FieldsPage;
 import com.mailer.ui.pages.HomePage;
 import com.mailer.ui.pages.NewFieldPage;
@@ -25,6 +27,18 @@ public class NewSubscriberTest extends BaseUITest {
     public void createNewSubscriber() {
         var subscriberPage = new SubscribersPage(page);
 
+        var subscriber = new SubscriberDTO()
+            .setName("Pit")
+            .setEmail("pit@gmail.com")
+            .setState(SubscriberStateEnum.ACTIVE);
 
+        subscriberPage
+            .clickAddSubscriberButton()
+            .fillName(subscriber.getName())
+            .fillEmail(subscriber.getEmail())
+            .selectState(subscriber.getState())
+            .submitForm();
+
+        System.out.println("finished");
     }
 }
