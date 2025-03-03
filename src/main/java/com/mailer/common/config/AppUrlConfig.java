@@ -1,4 +1,4 @@
-package com.mailer.common;
+package com.mailer.common.config;
 
 import com.mailer.common.utils.ConfigReader;
 

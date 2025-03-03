@@ -1,6 +1,6 @@
 package com.mailer.ui.pages;
 
-import com.mailer.common.AppUrlConfig;
+import com.mailer.common.config.AppUrlConfig;
 import com.mailer.ui.enums.FieldEnum;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;

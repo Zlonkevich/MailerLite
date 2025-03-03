@@ -1,6 +1,6 @@
 package com.mailer.ui.pages;
 
-import com.mailer.common.AppUrlConfig;
+import com.mailer.common.config.AppUrlConfig;
 import com.microsoft.playwright.Page;
 import org.springframework.stereotype.Component;
 
