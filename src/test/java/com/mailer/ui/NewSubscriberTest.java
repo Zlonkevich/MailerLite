@@ -33,6 +33,7 @@ public class NewSubscriberTest extends BaseUITest {
             .setState(SubscriberStateEnum.ACTIVE);
 
         subscriberPage
+            .navigateTo()
             .clickAddSubscriberButton()
             .fillName(subscriber.getName())
             .fillEmail(subscriber.getEmail())

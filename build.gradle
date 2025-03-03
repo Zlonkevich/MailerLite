@@ -5,8 +5,8 @@ plugins {
 
 group = 'org.example'
 version = '1.0-SNAPSHOT'
-sourceCompatibility = 21
-targetCompatibility = 21
+sourceCompatibility = 17
+targetCompatibility = 17
 
 repositories {
     mavenCentral()
@@ -33,7 +33,6 @@ dependencies {
     implementation("org.junit.jupiter:junit-jupiter-api:$versions.junit5")
     testImplementation("org.junit.platform:junit-platform-suite:$versions.junit5Agg")
 
-    implementation("io.rest-assured:rest-assured:$versions.restAssured")
     implementation("commons-codec:commons-codec:$versions.commonsCodec")
 
     implementation("io.qameta.allure:allure-assertj:$versions.allure")

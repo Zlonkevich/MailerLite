@@ -22,6 +22,12 @@ public class SubscribersPage extends BaseSMNPage {
         this.addSubscriberButton = page.locator(ADD_SUBSCRIBER_BTN);
     }
 
+    @Step("Navigate to the page")
+    public SubscribersPage navigateTo() {
+        page.navigate(URL);
+        return this;
+    }
+
     @Step("Click 'Add subscriber' button")
     public NewSubscriberPage clickAddSubscriberButton() {
         addSubscriberButton.click();

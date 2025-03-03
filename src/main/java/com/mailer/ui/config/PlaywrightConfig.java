@@ -16,7 +16,7 @@ public class PlaywrightConfig {
         }
 
         var browserType = System.getProperty("browser", "chrome").toLowerCase();
-        var isHeadless = Boolean.getBoolean(System.getProperty("headless", "true").toLowerCase());
+        var isHeadless = Boolean.getBoolean(System.getProperty("headless", "false").toLowerCase());
 
         var launchOptions = new BrowserType.LaunchOptions().setHeadless(isHeadless);
 
