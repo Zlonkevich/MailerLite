@@ -25,6 +25,7 @@ public class NewSubscriberPage extends BaseSMNPage {
     private static final String STATE_SELECT = "(//select[@id='state'])[1]";
     private static final String ADD_FIELD_SELECT = "(//select[@id='state'])[2]";
     private static final String CREATE_BUTTON = "//button[@type='submit']";
+    private static final String FIELD = "//*[@id='%s']";
 
 
     @Autowired
@@ -58,6 +59,22 @@ public class NewSubscriberPage extends BaseSMNPage {
     @Step("Select 'Add Field' from drop down list")
     public NewSubscriberPage selectAddField(String field) {
         addFieldSelect.selectOption(field);
+        return this;
+    }
+
+    @Step("Select 'Add Field' and input value")
+    public NewSubscriberPage selectAddFieldAndInputValue(String fieldName, String value) {
+        addFieldSelect.selectOption(fieldName);
+
+        var fieldLocator = page.locator(String.format(FIELD, fieldName));
+
+        var tagName = fieldLocator.evaluate("element => element.tagName").toString();
+
+        switch (tagName) {
+            case "input" -> fieldLocator.fill(value);
+            case "select" -> fieldLocator.selectOption(value);
+        }
+
         return this;
     }
 

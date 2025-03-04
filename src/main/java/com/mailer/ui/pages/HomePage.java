@@ -13,5 +13,4 @@ public class HomePage extends BaseSMNPage {
     public HomePage(Page page) {
         this.page = page;
     }
-
 }
