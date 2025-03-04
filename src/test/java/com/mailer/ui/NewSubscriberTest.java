@@ -21,19 +21,18 @@ import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.Map;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(classes = TestMailerApplication.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@Tag("Smoke")
+@Tag("E2E")
 @Epic("Subscribers")
 @Story("Creating subscribers")
 @DisplayName("Creating subscribers with different fields")
 public class NewSubscriberTest extends BaseUITest {
     private static SubscriberDTO subscriber;
     private static FieldsApi api;
+    private static final String TEST_TITLE = "testTitle";
 
     @Autowired
     private SubscribersPage subscribersPage;
@@ -50,7 +49,7 @@ public class NewSubscriberTest extends BaseUITest {
 
         // creating a field
         api.createField(new CreateFieldDTO()
-                            .setTitle("testTitle")
+                            .setTitle(TEST_TITLE)
                             .setType(FieldTypeEnum.STRING.getType())).execute();
     }
 
@@ -69,12 +68,12 @@ public class NewSubscriberTest extends BaseUITest {
             .fillName(subscriber.getName())
             .fillEmail(subscriber.getEmail())
             .selectState(subscriber.getState())
-            .selectAddFieldAndInputValue("testTitle", "test value")
+            .selectAddFieldAndInputValue(TEST_TITLE, "test value")
             .submitForm();
 
         assertThat(subs.getSubscriberName("1")).isEqualTo(subscriber.getName());
         assertThat(subs.getSubscriberEmail("1")).isEqualTo(subscriber.getEmail());
         assertThat(subs.getSubscriberState("1")).isEqualTo(subscriber.getState().getState());
-        assertThat(subs.getSubscriberAdditionalInfo("1")).isEqualTo("testTitle: test value");
+        assertThat(subs.getSubscriberAdditionalInfo("1")).isEqualTo(TEST_TITLE + ": test value");
     }
 }

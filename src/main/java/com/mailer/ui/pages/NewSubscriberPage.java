@@ -68,7 +68,7 @@ public class NewSubscriberPage extends BaseSMNPage {
 
         var fieldLocator = page.locator(String.format(FIELD, fieldName));
 
-        var tagName = fieldLocator.evaluate("element => element.tagName").toString();
+        var tagName = fieldLocator.evaluate("element => element.tagName").toString().toLowerCase();
 
         switch (tagName) {
             case "input" -> fieldLocator.fill(value);
