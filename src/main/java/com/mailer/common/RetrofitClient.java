@@ -1,6 +1,6 @@
 package com.mailer.common;
 
-import com.mailer.common.utils.ConfigReader;
+import com.mailer.common.utils.ApplicationPropertiesReader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import retrofit2.Retrofit;
@@ -14,7 +14,7 @@ public class RetrofitClient {
     public static Retrofit getClient() {
         if (retrofit == null) {
             retrofit = new Retrofit.Builder()
-                .baseUrl(ConfigReader.getProperty("backendBaseUrl"))
+                .baseUrl(ApplicationPropertiesReader.getProperty("backendBaseUrl", "http://localhost:8001"))
                 .addConverterFactory(JacksonConverterFactory.create())
                 .build();
         }

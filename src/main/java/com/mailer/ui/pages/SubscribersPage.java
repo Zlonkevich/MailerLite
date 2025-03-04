@@ -18,6 +18,10 @@ public class SubscribersPage extends BaseSMNPage {
     private static final String EDIT_BTN = "//td[contains(text(), '%s')]//parent::*//a[@data-test-id='edit-subscriber']";
     private static final String DELETE_BTN = "//td[contains(text(), '%s')]//parent::*//a[@data-test-id='delete-subscriber']";
     private static final String ADD_SUBSCRIBER_BTN = "[data-test-id='add-subscriber-button']";
+    private static final String SUBSCRIBER_NAME = "(//tr[@data-test-id='subscriber-row'])[%s]/td[2]";
+    private static final String SUBSCRIBER_EMAIL = "(//tr[@data-test-id='subscriber-row'])[%s]/td[3]";
+    private static final String SUBSCRIBER_STATE = "(//tr[@data-test-id='subscriber-row'])[%s]/td[4]";
+    private static final String SUBSCRIBER_ADDITIONAL_INFO = "(//tr[@data-test-id='subscriber-row'])[%s]/td[5]";
 
     @Autowired
     public SubscribersPage(Page page) {
@@ -49,13 +53,33 @@ public class SubscribersPage extends BaseSMNPage {
 
     @Step("Click 'Delete Subscriber Button' chosen by input value")
     public void clickDeleteButtonByValue(String subscriberData) {
-        String deleteSelector = String.format(DELETE_BTN, subscriberData);
+        var deleteSelector = String.format(DELETE_BTN, subscriberData);
         page.locator(deleteSelector).click();
     }
 
     @Step("Check if a specific subscriber row exists")
     public boolean isSubscriberRowVisible(int subscriberId) {
-        String rowSelector = String.format("[data-test-id='subscriber-row'][data-subscriber-id='%d']", subscriberId);
+        var rowSelector = String.format("[data-test-id='subscriber-row'][data-subscriber-id='%d']", subscriberId);
         return page.isVisible(rowSelector);
+    }
+
+    @Step("Getting subscriber's Name")
+    public String getSubscriberName(String rowNumber) {
+        return page.locator(String.format(SUBSCRIBER_NAME, rowNumber)).textContent();
+    }
+
+    @Step("Getting subscriber's Email")
+    public String getSubscriberEmail(String rowNumber) {
+        return page.locator(String.format(SUBSCRIBER_EMAIL, rowNumber)).textContent();
+    }
+
+    @Step("Getting subscriber's State")
+    public String getSubscriberState(String rowNumber) {
+        return page.locator(String.format(SUBSCRIBER_STATE, rowNumber)).textContent();
+    }
+
+    @Step("Getting subscriber's Additional info")
+    public String getSubscriberAdditionalInfo(String rowNumber) {
+        return page.locator(String.format(SUBSCRIBER_ADDITIONAL_INFO, rowNumber)).textContent();
     }
 }

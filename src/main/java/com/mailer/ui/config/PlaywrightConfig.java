@@ -23,13 +23,13 @@ public class PlaywrightConfig {
     @Bean(destroyMethod = "close")
     public Browser browser(Playwright playwright) {
         if (browser == null) {
-            var browserType = System.getProperty("browser", "chromium").toLowerCase();
-            var isHeadless = Boolean.parseBoolean(System.getProperty("headless", "false"));
+            var browserType = System.getProperty("browser", "chrome").toLowerCase();
+            var isHeadless = Boolean.parseBoolean(System.getProperty("headless", "true"));
 
             var launchOptions = new BrowserType.LaunchOptions().setHeadless(isHeadless);
 
             switch (browserType) {
-                case "chromium" -> browser = playwright.chromium().launch(launchOptions);
+                case "chrome", "chromium" -> browser = playwright.chromium().launch(launchOptions);
                 case "firefox" -> browser = playwright.firefox().launch(launchOptions);
                 case "webkit" -> browser = playwright.webkit().launch(launchOptions);
                 default -> throw new IllegalArgumentException("Unsupported browser: " + browserType);
