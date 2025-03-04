@@ -5,7 +5,6 @@ import com.mailer.common.enums.SubscriberStateEnum;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import io.qameta.allure.Step;
-import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -31,15 +30,11 @@ public class NewSubscriberPage extends BaseSMNPage {
     @Autowired
     public NewSubscriberPage(Page page) {
         this.page = page;
-    }
-
-    @PostConstruct
-    private void initLocators() {
-        nameInput = page.locator(NAME_FIELD);
-        emailInput = page.locator(EMAIL_FIELD);
-        stateSelect = page.locator(STATE_SELECT);
-        addFieldSelect = page.locator(ADD_FIELD_SELECT);
-        createButton = page.locator(CREATE_BUTTON);
+        this.nameInput = page.locator(NAME_FIELD);
+        this.emailInput = page.locator(EMAIL_FIELD);
+        this.stateSelect = page.locator(STATE_SELECT);
+        this.addFieldSelect = page.locator(ADD_FIELD_SELECT);
+        this.createButton = page.locator(CREATE_BUTTON);
     }
 
     @Step("Fill 'Name' input field")
