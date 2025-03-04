@@ -4,42 +4,52 @@ import com.microsoft.playwright.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
 
 @Slf4j
 @Configuration
 public class PlaywrightConfig {
-
     private Playwright playwright;
     private Browser browser;
+    private BrowserContext browserContext;
 
-    @Bean
+    @Bean(destroyMethod = "close")
     public Playwright playwright() {
-        playwright = Playwright.create();
+        if (playwright == null) {
+            playwright = Playwright.create();
+        }
         return playwright;
     }
 
-    @Bean
+    @Bean(destroyMethod = "close")
     public Browser browser(Playwright playwright) {
-        var browserType = System.getProperty("browser", "chrome").toLowerCase();
-        var isHeadless = Boolean.parseBoolean(System.getProperty("headless", "false"));
+        if (browser == null) {
+            var browserType = System.getProperty("browser", "chromium").toLowerCase();
+            var isHeadless = Boolean.parseBoolean(System.getProperty("headless", "false"));
 
-        var launchOptions = new BrowserType.LaunchOptions().setHeadless(isHeadless);
+            var launchOptions = new BrowserType.LaunchOptions().setHeadless(isHeadless);
 
-        switch (browserType) {
-            case "chrome", "chromium" -> browser = playwright.chromium().launch(launchOptions);
-            case "firefox" -> browser = playwright.firefox().launch(launchOptions);
-            case "webkit" -> browser = playwright.webkit().launch(launchOptions);
-            default -> throw new IllegalArgumentException("Unsupported browser: " + browserType);
+            switch (browserType) {
+                case "chromium" -> browser = playwright.chromium().launch(launchOptions);
+                case "firefox" -> browser = playwright.firefox().launch(launchOptions);
+                case "webkit" -> browser = playwright.webkit().launch(launchOptions);
+                default -> throw new IllegalArgumentException("Unsupported browser: " + browserType);
+            }
+            log.info("Browser {} launched", browserType);
         }
-
-        log.info("Browser {} set", browserType);
         return browser;
     }
 
     @Bean
-    @Scope("prototype")
-    public Page page(Browser browser) {
-        return browser.newPage();
+    public Page page(BrowserContext browserContext) {
+        return browserContext.newPage();
+    }
+
+    @Bean(destroyMethod = "close")
+    public BrowserContext browserContext(Browser browser) {
+        if (browserContext == null) {
+            browserContext = browser.newContext();
+            log.info("Browser context created.");
+        }
+        return browserContext;
     }
 }

@@ -12,25 +12,13 @@ public class BaseSMNPage {
     @Autowired
     protected Page page;
 
-//    protected final Locator homeTab;
-//    protected final Locator subscribersTab;
-//    protected final Locator fieldsTab;
-
-    protected Locator homeTab = page.locator(HOME_TAB);
-    protected Locator subscribersTab = page.locator(SUBSCRIBERS_TAB);
-    protected Locator fieldsTab = page.locator(FIELDS_TAB);
+    protected Locator homeTab;
+    protected Locator subscribersTab;
+    protected Locator fieldsTab;
 
     private static final String HOME_TAB = "(//*[@data-test-id='home-tab'])[1]";
     private static final String FIELDS_TAB = "(//a[@data-test-id='fields-tab'])[1]";
     private static final String SUBSCRIBERS_TAB = "(//a[@data-test-id='subscribers-tab'])[1]";
-
-    //    public BaseSMNPage(Page page) {
-//    public BaseSMNPage() {
-//        this.page = page;
-//        this.homeTab = page.locator(HOME_TAB);
-//        this.subscribersTab = page.locator(SUBSCRIBERS_TAB);
-//        this.fieldsTab = page.locator(FIELDS_TAB);
-//    }
 
     @PostConstruct
     public void init() {
