@@ -5,7 +5,9 @@ import com.mailer.common.enums.SubscriberStateEnum;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import io.qameta.allure.Step;
+import jakarta.annotation.PostConstruct;
 import lombok.Getter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -13,26 +15,31 @@ public class NewSubscriberPage extends BaseSMNPage {
     @Getter
     private final String URL = AppUrlConfig.Subscribers.NEW;
 
-    private final Locator nameInput;
-    private final Locator emailInput;
-    private final Locator stateSelect;
-    private final Locator addFieldSelect;
-    private final Locator createButton;
+    private Locator nameInput;
+    private Locator emailInput;
+    private Locator stateSelect;
+    private Locator addFieldSelect;
+    private Locator createButton;
 
     private static final String NAME_FIELD = "input#name";
     private static final String EMAIL_FIELD = "input#email";
-    private static final String STATE_SELECT = "#state";
-    private static final String ADD_FIELD_SELECT = "#state";
+    private static final String STATE_SELECT = "(//select[@id='state'])[1]";
+    private static final String ADD_FIELD_SELECT = "(//select[@id='state'])[2]";
     private static final String CREATE_BUTTON = "//button[@type='submit']";
 
 
+    @Autowired
     public NewSubscriberPage(Page page) {
-        super(page);
-        this.nameInput = page.locator(NAME_FIELD);
-        this.emailInput = page.locator(EMAIL_FIELD);
-        this.stateSelect = page.locator(STATE_SELECT).nth(1);
-        this.addFieldSelect = page.locator(ADD_FIELD_SELECT).nth(2);
-        this.createButton = page.locator(CREATE_BUTTON);
+        this.page = page;
+    }
+
+    @PostConstruct
+    private void initLocators() {
+        nameInput = page.locator(NAME_FIELD);
+        emailInput = page.locator(EMAIL_FIELD);
+        stateSelect = page.locator(STATE_SELECT);
+        addFieldSelect = page.locator(ADD_FIELD_SELECT);
+        createButton = page.locator(CREATE_BUTTON);
     }
 
     @Step("Fill 'Name' input field")
@@ -49,7 +56,13 @@ public class NewSubscriberPage extends BaseSMNPage {
 
     @Step("Select 'State' from drop down list")
     public NewSubscriberPage selectState(SubscriberStateEnum stateEnum) {
-        addFieldSelect.selectOption(stateEnum.getState());
+        stateSelect.selectOption(stateEnum.getState());
+        return this;
+    }
+
+    @Step("Select 'Add Field' from drop down list")
+    public NewSubscriberPage selectAddField(String field) {
+        addFieldSelect.selectOption(field);
         return this;
     }
 

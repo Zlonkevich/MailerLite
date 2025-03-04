@@ -9,25 +9,28 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class BaseUITest {
-    private static Playwright playwright;
-    private static Browser browser;
+    @Autowired
+    private Playwright playwright;
+    @Autowired
+    private Browser browser;
 
     private BrowserContext browserContext;
     protected Page page;
 
     @BeforeAll
     static void launchBrowser() {
-        playwright = Playwright.create();
-        browser = PlaywrightConfig.getBrowser();
+//        playwright = Playwright.create();
+//        browser = PlaywrightConfig.browser();
     }
 
     @AfterAll
     static void closeBrowser() {
-        playwright.close();
+//        playwright.close();
     }
 
 

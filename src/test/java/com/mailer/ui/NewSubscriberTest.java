@@ -25,14 +25,14 @@ public class NewSubscriberTest extends BaseUITest {
 
     @Test
     public void createNewSubscriber() {
-        var subscriberPage = new SubscribersPage(page);
+//        var subscribersPage = new SubscribersPage(page);
 
         var subscriber = new SubscriberDTO()
             .setName("Pit")
             .setEmail("pit@gmail.com")
             .setState(SubscriberStateEnum.ACTIVE);
 
-        subscriberPage
+        subscribersPage
             .navigateTo()
             .clickAddSubscriberButton()
             .fillName(subscriber.getName())

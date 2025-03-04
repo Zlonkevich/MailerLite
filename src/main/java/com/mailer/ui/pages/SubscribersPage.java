@@ -4,12 +4,14 @@ import com.mailer.common.config.AppUrlConfig;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import io.qameta.allure.Step;
+import jakarta.annotation.PostConstruct;
 import lombok.Getter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class SubscribersPage extends BaseSMNPage {
-    private final Locator addSubscriberButton;
+    private Locator addSubscriberButton;
     @Getter
     private final String URL = AppUrlConfig.Subscribers.SUBSCRIBERS;
 
@@ -17,9 +19,14 @@ public class SubscribersPage extends BaseSMNPage {
     private static final String DELETE_BTN = "//td[contains(text(), '%s')]//parent::*//a[@data-test-id='delete-subscriber']";
     private static final String ADD_SUBSCRIBER_BTN = "[data-test-id='add-subscriber-button']";
 
+    @Autowired
     public SubscribersPage(Page page) {
-        super(page);
-        this.addSubscriberButton = page.locator(ADD_SUBSCRIBER_BTN);
+        this.page = page;
+    }
+
+    @PostConstruct
+    private void initLocators() {
+        addSubscriberButton = page.locator(ADD_SUBSCRIBER_BTN);
     }
 
     @Step("Navigate to the page")

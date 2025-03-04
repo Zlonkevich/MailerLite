@@ -5,7 +5,9 @@ import com.mailer.ui.enums.FieldEnum;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import io.qameta.allure.Step;
+import jakarta.annotation.PostConstruct;
 import lombok.Getter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -13,19 +15,24 @@ public class NewFieldPage extends BaseSMNPage {
     @Getter
     private final String URL = AppUrlConfig.Fields.NEW;
 
-    private final Locator titleInput;
-    private final Locator typeSelect;
-    private final Locator createButton;
+    private Locator titleInput;
+    private Locator typeSelect;
+    private Locator createButton;
 
     private static final String TITLE_FIELD = "input#title";
     private static final String TYPE_DD_LIST = "select#type";
     private static final String CREATE_BUTTON = "//button[@type='submit']";
 
+    @Autowired
     public NewFieldPage(Page page) {
-        super(page);
-        this.titleInput = page.locator(TITLE_FIELD);
-        this.typeSelect = page.locator(TYPE_DD_LIST);
-        this.createButton = page.locator(CREATE_BUTTON);
+        this.page = page;
+    }
+
+    @PostConstruct
+    private void initLocators() {
+        titleInput = page.locator(TITLE_FIELD);
+        typeSelect = page.locator(TYPE_DD_LIST);
+        createButton = page.locator(CREATE_BUTTON);
     }
 
     @Step("Fill 'Title' input field")
