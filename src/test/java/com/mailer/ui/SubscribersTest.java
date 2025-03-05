@@ -48,7 +48,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @DisplayName("Creating subscribers with different fields")
 @Slf4j
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class NewSubscriberTest extends BaseUITest {
+public class SubscribersTest extends BaseUITest {
     private List<SubscriberDTO> subscribers;
     private GetSubscribersRec getSubscribersRec;
     private int fieldId;
