@@ -11,15 +11,22 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class FieldsPage extends BaseSMNPage {
-    protected Locator addField;
     @Getter
     private final String URL = AppUrlConfig.Fields.FIELDS;
+    protected Locator addField;
 
     private static final String ADD_FIELD = "//a[@data-test-id='add-field-button']";
 
     @Autowired
     public FieldsPage(Page page) {
         this.page = page;
+        this.addField = page.locator(ADD_FIELD);
+    }
+
+    @Step("Navigate to the page")
+    public FieldsPage navigateTo() {
+        page.navigate(URL);
+        return this;
     }
 
     @PostConstruct
@@ -27,8 +34,9 @@ public class FieldsPage extends BaseSMNPage {
         addField = page.locator(ADD_FIELD);
     }
 
-    @Step("Click 'Add field' tab")
-    public void clickHomeTab() {
+    @Step("Click 'Add field' button")
+    public NewFieldPage clickAddFieldBtn() {
         addField.click();
+        return new NewFieldPage(page);
     }
 }

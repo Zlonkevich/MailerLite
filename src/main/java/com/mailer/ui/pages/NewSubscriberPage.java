@@ -20,22 +20,17 @@ public class NewSubscriberPage extends BaseSMNPage {
     private Locator addFieldSelect;
     private Locator createButton;
 
-    private static final String NAME_FIELD = "input#name";
-    private static final String EMAIL_FIELD = "input#email";
-    private static final String STATE_SELECT = "(//select[@id='state'])[1]";
-    private static final String ADD_FIELD_SELECT = "(//select[@id='state'])[2]";
-    private static final String CREATE_BUTTON = "//button[@type='submit']";
     private static final String FIELD = "//*[@id='%s']";
 
 
     @Autowired
     public NewSubscriberPage(Page page) {
         this.page = page;
-        this.nameInput = page.locator(NAME_FIELD);
-        this.emailInput = page.locator(EMAIL_FIELD);
-        this.stateSelect = page.locator(STATE_SELECT);
-        this.addFieldSelect = page.locator(ADD_FIELD_SELECT);
-        this.createButton = page.locator(CREATE_BUTTON);
+        this.nameInput = page.locator("input#name");
+        this.emailInput = page.locator("input#email");
+        this.stateSelect = page.locator("(//select[@id='state'])[1]");
+        this.addFieldSelect = page.locator("(//select[@id='state'])[2]");
+        this.createButton = page.locator("//button[@type='submit']");
     }
 
     @Step("Fill 'Name' input field")
@@ -63,23 +58,25 @@ public class NewSubscriberPage extends BaseSMNPage {
     }
 
     @Step("Select 'Add Field' and input value")
-    public NewSubscriberPage selectAddFieldAndInputValue(String fieldName, String value) {
+    public NewSubscriberPage selectAddFieldAndInputValue(String fieldName, Object value) {
         addFieldSelect.selectOption(fieldName);
 
         var fieldLocator = page.locator(String.format(FIELD, fieldName));
 
-        var tagName = fieldLocator.evaluate("element => element.tagName").toString().toLowerCase();
 
-        switch (tagName) {
-            case "input" -> fieldLocator.fill(value);
-            case "select" -> fieldLocator.selectOption(value);
+        if (value instanceof String) {
+            switch (value.toString()) {
+                case "Yes", "No" -> fieldLocator.selectOption(value.toString());
+                default -> fieldLocator.fill(value.toString());
+            }
+        } else if (value instanceof Integer) {
+            fieldLocator.type(value + "");
         }
-
         return this;
     }
 
     @Step("Click 'Create' button")
-    public SubscribersPage submitForm() {
+    public SubscribersPage clickCreateBtn() {
         createButton.click();
         return new SubscribersPage(page);
     }

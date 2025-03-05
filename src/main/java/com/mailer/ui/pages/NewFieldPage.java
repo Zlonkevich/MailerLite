@@ -5,8 +5,9 @@ import com.mailer.ui.enums.FieldEnum;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import io.qameta.allure.Step;
-import jakarta.annotation.PostConstruct;
+
 import lombok.Getter;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,34 +20,31 @@ public class NewFieldPage extends BaseSMNPage {
     private Locator typeSelect;
     private Locator createButton;
 
-    private static final String TITLE_FIELD = "input#title";
-    private static final String TYPE_DD_LIST = "select#type";
-    private static final String CREATE_BUTTON = "//button[@type='submit']";
-
     @Autowired
     public NewFieldPage(Page page) {
         this.page = page;
-    }
-
-    @PostConstruct
-    private void initLocators() {
-        titleInput = page.locator(TITLE_FIELD);
-        typeSelect = page.locator(TYPE_DD_LIST);
-        createButton = page.locator(CREATE_BUTTON);
+        titleInput = page.locator("input#title");
+        typeSelect = page.locator("select#type");
+        createButton = page.locator("//button[@type='submit']");
     }
 
     @Step("Fill 'Title' input field")
-    public void fillTitle(String title) {
+    public NewFieldPage fillTitle(String title) {
         titleInput.fill(title);
+        return this;
     }
 
     @Step("Select 'Type' from drop down list")
-    public void selectType(FieldEnum value) {
+    public NewFieldPage selectType(FieldEnum value) {
         typeSelect.selectOption(value.getType());
+        return this;
     }
 
     @Step("Click 'Create' button")
-    public void submitForm() {
+    @SneakyThrows
+    public FieldsPage clickCreateBtn() {
         createButton.click();
+        Thread.sleep(200);
+        return new FieldsPage(page);
     }
 }
