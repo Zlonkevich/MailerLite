@@ -19,11 +19,16 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -34,8 +39,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Story("Creating subscribers")
 @DisplayName("Creating subscribers with different fields")
 @Slf4j
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class NewSubscriberTest extends BaseUITest {
-    private SubscriberDTO subscriber;
+    private List<SubscriberDTO> subscribers;
     private int fieldId;
 
     private static FieldsApi fieldsApi;
@@ -55,10 +61,14 @@ public class NewSubscriberTest extends BaseUITest {
     @BeforeEach
     @SneakyThrows
     void setup() {
-        subscriber = new SubscriberDTO()
-            .setName("Pit")
-            .setEmail("pit@gmail.com")
-            .setState(SubscriberStateEnum.ACTIVE);
+        subscribers = List.of(new SubscriberDTO()
+                                  .setName("Pit")
+                                  .setEmail("pit@gmail.com")
+                                  .setState(SubscriberStateEnum.ACTIVE),
+                              new SubscriberDTO()
+                                  .setName("Tom")
+                                  .setEmail("tom@gmail.com")
+                                  .setState(SubscriberStateEnum.BOUNCED));
     }
 
     @AfterEach
@@ -69,8 +79,9 @@ public class NewSubscriberTest extends BaseUITest {
     public void tearDown() {
     }
 
-    //    @Test
-    @Description("Test creates a subscriber and verifies all the fields")
+    @Test
+    @Order(1)
+    @Description("Test creates a subscriber and verifies all his fields")
     @SneakyThrows
     public void createNewSubscriber() {
         var value = "test value";
@@ -81,23 +92,23 @@ public class NewSubscriberTest extends BaseUITest {
             .execute()
             .body().data().id();
 
-
         var subs = subscribersPage
             .navigateTo()
             .clickAddSubscriberButton()
-            .fillName(subscriber.getName())
-            .fillEmail(subscriber.getEmail())
-            .selectState(subscriber.getState())
+            .fillName(subscribers.get(0).getName())
+            .fillEmail(subscribers.get(0).getEmail())
+            .selectState(subscribers.get(0).getState())
             .selectAddFieldAndInputValue(TEST_TITLE, value)
             .clickCreateBtn();
 
-        assertThat(subs.getSubscriberName("1")).isEqualTo(subscriber.getName());
-        assertThat(subs.getSubscriberEmail("1")).isEqualTo(subscriber.getEmail());
-        assertThat(subs.getSubscriberState("1")).isEqualTo(subscriber.getState().getState());
+        assertThat(subs.getSubscriberName("1")).isEqualTo(subscribers.get(0).getName());
+        assertThat(subs.getSubscriberEmail("1")).isEqualTo(subscribers.get(0).getEmail());
+        assertThat(subs.getSubscriberState("1")).isEqualTo(subscribers.get(0).getState().getState());
         assertThat(subs.getSubscriberAdditionalInfo("1")).isEqualTo(String.format("%s: %s", TEST_TITLE, value));
     }
 
     @Test
+    @Order(2)
     @Description("Field types restrictions are working correctly")
     public void fieldTypesRestrictions() {
         // it would be way faster to use the API to create all field types. Depends on test purposes
@@ -136,17 +147,41 @@ public class NewSubscriberTest extends BaseUITest {
             .selectType(FieldEnum.NUMBER)
             .clickCreateBtn();
 
-        subscribersPage
+        var subs = subscribersPage
             .navigateTo()
             .clickAddSubscriberButton()
-            .fillName(subscriber.getName())
-            .fillEmail(subscriber.getEmail())
-            .selectState(subscriber.getState())
+            .fillName(subscribers.get(1).getName())
+            .fillEmail(subscribers.get(1).getEmail())
+            .selectState(subscribers.get(1).getState())
+            .selectAddFieldAndInputValue(FieldEnum.STRING.getType(), FieldEnum.STRING.getType())
+            .selectAddFieldAndInputValue(FieldEnum.NUMBER.getType(), 1)
+            .selectAddFieldAndInputValue(FieldEnum.DATE.getType(), 10102020)
+            .selectAddFieldAndInputValue(FieldEnum.BOOLEAN.getType(), "Yes")
+
+
+            .fillName(subscribers.get(1).getName())
+            .fillEmail(subscribers.get(1).getEmail())
+            .selectState(subscribers.get(1).getState())
             .selectAddFieldAndInputValue(FieldEnum.STRING.getType(), FieldEnum.STRING.getType())
             .selectAddFieldAndInputValue(FieldEnum.NUMBER.getType(), 1)
             .selectAddFieldAndInputValue(FieldEnum.DATE.getType(), 10102020)
             .selectAddFieldAndInputValue(FieldEnum.BOOLEAN.getType(), "Yes")
             .clickCreateBtn();
+
+        assertThat(subs.getSubscriberName("1")).isEqualTo(subscribers.get(1).getName());
+        assertThat(subs.getSubscriberEmail("1")).isEqualTo(subscribers.get(1).getEmail());
+        assertThat(subs.getSubscriberState("1")).isEqualTo(subscribers.get(1).getState().getState());
+        assertThat(subs.getSubscriberAdditionalInfo("1")).contains(String.format("%s: %s", FieldEnum.STRING.getType(), FieldEnum.STRING.getType()));
+        assertThat(subs.getSubscriberAdditionalInfo("1")).contains(String.format("%s: %s", FieldEnum.NUMBER.getType(), 1));
+        assertThat(subs.getSubscriberAdditionalInfo("1")).contains(String.format("%s: %s", FieldEnum.DATE.getType(), "2020-10-10"));
+        assertThat(subs.getSubscriberAdditionalInfo("1")).contains(String.format("%s: %s", FieldEnum.BOOLEAN.getType(), 1));
+
+    }
+
+    @Test
+    @Order(3)
+    @Description()
+    public void getSubscribers() {
 
     }
 }

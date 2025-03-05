@@ -23,6 +23,10 @@ public class SubscribersPage extends BaseSMNPage {
     private static final String SUBSCRIBER_STATE = "(//tr[@data-test-id='subscriber-row'])[%s]/td[4]";
     private static final String SUBSCRIBER_ADDITIONAL_INFO = "(//tr[@data-test-id='subscriber-row'])[%s]/td[5]";
 
+    private static final String NAME_REQUIRED = "//p[contains(text(), 'The name field is required.')]";
+    private static final String STATE_REQUIRED = "//p[contains(text(), 'The state field is required.')]";
+    private static final String EMAIL_MUST_BE_VALID = "//p[contains(text(), 'The email must be a valid email address.')]";
+
     @Autowired
     public SubscribersPage(Page page) {
         this.page = page;

@@ -6,6 +6,7 @@ import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import io.qameta.allure.Step;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -76,8 +77,10 @@ public class NewSubscriberPage extends BaseSMNPage {
     }
 
     @Step("Click 'Create' button")
+    @SneakyThrows
     public SubscribersPage clickCreateBtn() {
         createButton.click();
+        Thread.sleep(1000); // will be replaced with waiting some event
         return new SubscribersPage(page);
     }
 }

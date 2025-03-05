@@ -44,7 +44,7 @@ public class NewFieldPage extends BaseSMNPage {
     @SneakyThrows
     public FieldsPage clickCreateBtn() {
         createButton.click();
-        Thread.sleep(200);
+        Thread.sleep(500); // will be replaced with waiting some event
         return new FieldsPage(page);
     }
 }
