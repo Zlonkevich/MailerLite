@@ -1,11 +1,11 @@
 package com.mailer.common.controller;
 
-import okhttp3.ResponseBody;
+import com.mailer.common.dto.subscribers.GetSubscribersRec;
 import retrofit2.Call;
 import retrofit2.http.GET;
 
 public interface SubscribersApi {
 
     @GET("/api/v1/subscribers")
-    Call<ResponseBody> getFields();
+    Call<GetSubscribersRec> getFields();
 }

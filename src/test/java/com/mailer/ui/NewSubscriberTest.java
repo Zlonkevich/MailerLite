@@ -3,8 +3,10 @@ package com.mailer.ui;
 import com.mailer.common.RetrofitClient;
 import com.mailer.common.TestMailerApplication;
 import com.mailer.common.controller.FieldsApi;
+import com.mailer.common.controller.SubscribersApi;
 import com.mailer.common.dto.CreateFieldDTO;
 import com.mailer.common.dto.SubscriberDTO;
+import com.mailer.common.dto.subscribers.GetSubscribersRec;
 import com.mailer.common.enums.SubscriberStateEnum;
 import com.mailer.ui.enums.FieldEnum;
 import com.mailer.ui.pages.FieldsPage;
@@ -28,10 +30,14 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import retrofit2.Call;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(classes = TestMailerApplication.class)
@@ -44,9 +50,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class NewSubscriberTest extends BaseUITest {
     private List<SubscriberDTO> subscribers;
+    private GetSubscribersRec getSubscribersRec;
     private int fieldId;
 
     private static FieldsApi fieldsApi;
+    private static SubscribersApi subscribersApi;
     private static final String TEST_TITLE = "testTitle";
 
     @Autowired
@@ -58,6 +66,7 @@ public class NewSubscriberTest extends BaseUITest {
     @BeforeAll
     static void init() {
         fieldsApi = RetrofitClient.getClient().create(FieldsApi.class);
+        subscribersApi = RetrofitClient.getClient().create(SubscribersApi.class);
     }
 
     @BeforeEach
@@ -113,7 +122,7 @@ public class NewSubscriberTest extends BaseUITest {
     @Order(2)
     @Description("Field types restrictions are working correctly")
     public void fieldTypesRestrictions() {
-        // it would be way faster to use the API to create all field types
+        // it would be way faster to use the API to create all field types like this:
         /**
          FieldEnum.stream().forEach(f -> {
          try {
@@ -163,6 +172,7 @@ public class NewSubscriberTest extends BaseUITest {
 
         newSubs.clickCreateBtn();
 
+        // verifying warnings
         assertTrue(NewSubscriberPage.isEmailMustBeValidVisible(page));
         assertTrue(NewSubscriberPage.isNameRequiredVisible(page));
         assertTrue(NewSubscriberPage.isStateRequiredVisible(page));
@@ -171,6 +181,8 @@ public class NewSubscriberTest extends BaseUITest {
         assertTrue(NewSubscriberPage.isValueRequiredVisible(page, FieldEnum.DATE.getType()));
         assertTrue(NewSubscriberPage.isValueRequiredVisible(page, FieldEnum.BOOLEAN.getType()));
 
+
+        // setting correct values
         var subs = newSubs.
             fillName(subscribers.get(1).getName())
             .fillEmail(subscribers.get(1).getEmail())
@@ -181,6 +193,7 @@ public class NewSubscriberTest extends BaseUITest {
             .selectAddFieldAndInputValue(FieldEnum.BOOLEAN.getType(), "Yes")
             .clickCreateBtn();
 
+        // verifying correct values
         assertThat(subs.getSubscriberName("1")).isEqualTo(subscribers.get(1).getName());
         assertThat(subs.getSubscriberEmail("1")).isEqualTo(subscribers.get(1).getEmail());
         assertThat(subs.getSubscriberState("1")).isEqualTo(subscribers.get(1).getState().getState());
@@ -193,8 +206,67 @@ public class NewSubscriberTest extends BaseUITest {
 
     @Test
     @Order(3)
-    @Description()
-    public void getSubscribers() {
+    @Description("Response is not empty")
+    void testResponseDataCount() throws Exception {
+        Call<GetSubscribersRec> call = subscribersApi.getFields();
+        GetSubscribersRec response = call.execute().body();
 
+        assertNotNull(response);
+        assertNotNull(response.data());
+        assertFalse(response.data().isEmpty(), "Expected non-empty data list");
+    }
+
+    @Test
+    @Order(4)
+    @Description("User's fields check ")
+    void testUserDataFields() throws Exception {
+        Call<GetSubscribersRec> call = subscribersApi.getFields();
+        GetSubscribersRec response = call.execute().body();
+
+        assertNotNull(response);
+        assertNotNull(response.data());
+
+        var user = response.data().get(0);
+        assertTrue(user.id() > 0);
+        assertEquals("tom@gmail.com", user.email());
+        assertEquals("Tom", user.name());
+        assertEquals("bounced", user.state());
+    }
+
+    @Test
+    @Order(5)
+    @Description("Fields count")
+    void testFieldsCount() throws Exception {
+        Call<GetSubscribersRec> call = subscribersApi.getFields();
+        GetSubscribersRec response = call.execute().body();
+
+        assertNotNull(response);
+        assertNotNull(response.data());
+
+        var user = response.data().get(0);
+        assertTrue(user.fields().size() > 0, "Expected fields for user");
+
+        var field = user.fields().get(0);
+        assertTrue(field.fieldId() > 0);
+        assertEquals("string", field.title());
+        assertEquals("string", field.type());
+        assertEquals("string", field.value());
+    }
+
+    @Test
+    @Order(6)
+    @Description("Multiple user check")
+    void testMultipleUsers() throws Exception {
+        Call<GetSubscribersRec> call = subscribersApi.getFields();
+        GetSubscribersRec response = call.execute().body();
+
+        assertNotNull(response);
+        assertNotNull(response.data());
+
+        var secondUser = response.data().get(1);
+        assertTrue(secondUser.id() > 0);
+        assertEquals("pit@gmail.com", secondUser.email());
+        assertEquals("Pit", secondUser.name());
+        assertEquals("active", secondUser.state());
     }
 }
