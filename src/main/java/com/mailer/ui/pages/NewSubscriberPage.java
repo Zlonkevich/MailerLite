@@ -22,7 +22,10 @@ public class NewSubscriberPage extends BaseSMNPage {
     private Locator createButton;
 
     private static final String FIELD = "//*[@id='%s']";
-
+    private static final String NAME_REQUIRED = "//p[contains(text(), 'The name field is required.')]";
+    private static final String STATE_REQUIRED = "//p[contains(text(), 'The state field is required.')]";
+    private static final String EMAIL_MUST_BE_VALID = "//p[contains(text(), 'The email must be a valid email address.')]";
+    private static final String VALUE_REQUIRED = "//*[@id='%s']/ancestor::*[3]//p";
 
     @Autowired
     public NewSubscriberPage(Page page) {
@@ -47,8 +50,8 @@ public class NewSubscriberPage extends BaseSMNPage {
     }
 
     @Step("Select 'State' from drop down list")
-    public NewSubscriberPage selectState(SubscriberStateEnum stateEnum) {
-        stateSelect.selectOption(stateEnum.getState());
+    public NewSubscriberPage selectState(String stateEnum) {
+        stateSelect.selectOption(stateEnum);
         return this;
     }
 
@@ -74,6 +77,36 @@ public class NewSubscriberPage extends BaseSMNPage {
             fieldLocator.type(value + "");
         }
         return this;
+    }
+
+    @Step("Check if 'The name field is required' message is visible")
+    public static boolean isNameRequiredVisible(Page page) {
+        return isElementVisible(page, NAME_REQUIRED);
+    }
+
+    @Step("Check if 'The state field is required' message is visible")
+    public static boolean isStateRequiredVisible(Page page) {
+        return isElementVisible(page, STATE_REQUIRED);
+    }
+
+    @Step("Check if 'The email must be a valid email address' message is visible")
+    public static boolean isEmailMustBeValidVisible(Page page) {
+        return isElementVisible(page, EMAIL_MUST_BE_VALID);
+    }
+
+    @Step("Check if 'Value required' message with ID {id} is visible")
+    public static boolean isValueRequiredVisible(Page page, String id) {
+        String formattedXpath = String.format(VALUE_REQUIRED, id);
+        return isElementVisible(page, formattedXpath);
+    }
+
+    // General method for checking visibility of an element by XPath
+    private static boolean isElementVisible(Page page, String xpath) {
+        try {
+            return page.locator(xpath).isVisible();
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     @Step("Click 'Create' button")

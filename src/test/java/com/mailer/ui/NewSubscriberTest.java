@@ -8,6 +8,7 @@ import com.mailer.common.dto.SubscriberDTO;
 import com.mailer.common.enums.SubscriberStateEnum;
 import com.mailer.ui.enums.FieldEnum;
 import com.mailer.ui.pages.FieldsPage;
+import com.mailer.ui.pages.NewSubscriberPage;
 import com.mailer.ui.pages.SubscribersPage;
 import io.qameta.allure.Description;
 import io.qameta.allure.Epic;
@@ -31,6 +32,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(classes = TestMailerApplication.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -97,7 +99,7 @@ public class NewSubscriberTest extends BaseUITest {
             .clickAddSubscriberButton()
             .fillName(subscribers.get(0).getName())
             .fillEmail(subscribers.get(0).getEmail())
-            .selectState(subscribers.get(0).getState())
+            .selectState(subscribers.get(0).getState().getState())
             .selectAddFieldAndInputValue(TEST_TITLE, value)
             .clickCreateBtn();
 
@@ -111,7 +113,7 @@ public class NewSubscriberTest extends BaseUITest {
     @Order(2)
     @Description("Field types restrictions are working correctly")
     public void fieldTypesRestrictions() {
-        // it would be way faster to use the API to create all field types. Depends on test purposes
+        // it would be way faster to use the API to create all field types
         /**
          FieldEnum.stream().forEach(f -> {
          try {
@@ -147,21 +149,32 @@ public class NewSubscriberTest extends BaseUITest {
             .selectType(FieldEnum.NUMBER)
             .clickCreateBtn();
 
-        var subs = subscribersPage
+        // setting incorrect values
+        var newSubs = subscribersPage
             .navigateTo()
             .clickAddSubscriberButton()
-            .fillName(subscribers.get(1).getName())
-            .fillEmail(subscribers.get(1).getEmail())
-            .selectState(subscribers.get(1).getState())
-            .selectAddFieldAndInputValue(FieldEnum.STRING.getType(), FieldEnum.STRING.getType())
-            .selectAddFieldAndInputValue(FieldEnum.NUMBER.getType(), 1)
-            .selectAddFieldAndInputValue(FieldEnum.DATE.getType(), 10102020)
-            .selectAddFieldAndInputValue(FieldEnum.BOOLEAN.getType(), "Yes")
+            .fillName("")
+            .fillEmail("asdasd@asd")
+            .selectState("")
+            .selectAddFieldAndInputValue(FieldEnum.STRING.getType(), "")
+            .selectAddField(FieldEnum.BOOLEAN.getType())
+            .selectAddFieldAndInputValue(FieldEnum.NUMBER.getType(), "")
+            .selectAddFieldAndInputValue(FieldEnum.DATE.getType(), "");
 
+        newSubs.clickCreateBtn();
 
-            .fillName(subscribers.get(1).getName())
+        assertTrue(NewSubscriberPage.isEmailMustBeValidVisible(page));
+        assertTrue(NewSubscriberPage.isNameRequiredVisible(page));
+        assertTrue(NewSubscriberPage.isStateRequiredVisible(page));
+        assertTrue(NewSubscriberPage.isValueRequiredVisible(page, FieldEnum.STRING.getType()));
+        assertTrue(NewSubscriberPage.isValueRequiredVisible(page, FieldEnum.NUMBER.getType()));
+        assertTrue(NewSubscriberPage.isValueRequiredVisible(page, FieldEnum.DATE.getType()));
+        assertTrue(NewSubscriberPage.isValueRequiredVisible(page, FieldEnum.BOOLEAN.getType()));
+
+        var subs = newSubs.
+            fillName(subscribers.get(1).getName())
             .fillEmail(subscribers.get(1).getEmail())
-            .selectState(subscribers.get(1).getState())
+            .selectState(subscribers.get(1).getState().getState())
             .selectAddFieldAndInputValue(FieldEnum.STRING.getType(), FieldEnum.STRING.getType())
             .selectAddFieldAndInputValue(FieldEnum.NUMBER.getType(), 1)
             .selectAddFieldAndInputValue(FieldEnum.DATE.getType(), 10102020)
